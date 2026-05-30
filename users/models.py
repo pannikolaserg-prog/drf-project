@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
-class Users(AbstractUser):
+class User(AbstractUser):
     username = None
 
     email = models.EmailField(
@@ -12,7 +12,7 @@ class Users(AbstractUser):
     )
 
     phone = models.CharField(
-        max_length=35,
+        max_length=20,
         blank=True,
         null=True,
         verbose_name="Телефон",
@@ -20,7 +20,11 @@ class Users(AbstractUser):
     )
 
     city = models.CharField(
-        max_length=35, verbose_name="Город", help_text="Укажите город"
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name="Город",
+        help_text="Укажите город",
     )
 
     avatar = models.ImageField(
