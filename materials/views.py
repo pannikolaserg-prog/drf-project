@@ -3,16 +3,20 @@ from rest_framework.generics import (ListCreateAPIView,
 from rest_framework.viewsets import ModelViewSet
 
 from .models import Course, Lesson
-from .serializers import CourseSerializer, LessonSerializer
+from .serializers import CourseSerializer, LessonSerializer, CourseDetailSerializers
 
 
-# Курс - ViewSet (всё в одном классе)
 class CourseViewSet(ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
 
 
-# Урок - Generic классы (только 2 класса)
+    def get_serializer_class(self):
+        if self.action == "retrieve":
+            return CourseDetailSerializers
+        return CourseSerializer
+
+
 class LessonListCreateAPIView(ListCreateAPIView):
     """GET список уроков, POST создать урок"""
 
