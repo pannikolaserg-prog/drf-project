@@ -1,12 +1,11 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, filters
-from rest_framework.viewsets import ModelViewSet
 from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView, DestroyAPIView
 from rest_framework.response import Response
 
 from .filters import PaymentFilter
 from .models import User, Payment
-from .serializers import UserSerializer, PaymentSerializer
+from .serializers import UserSerializer, PaymentSerializer, UserProfileSerializer
 
 
 class UserListView(ListAPIView):
@@ -46,3 +45,12 @@ class PaymentViewSet(viewsets.ModelViewSet):
     ordering = ['-payment_date']  # По умолчанию сортировка: сначала новые
 
 
+from rest_framework import generics, permissions
+
+
+class UserProfileView(generics.RetrieveAPIView):
+    serializer_class = UserProfileSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
