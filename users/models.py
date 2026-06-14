@@ -44,15 +44,18 @@ class User(AbstractUser):
 
 
 class Payment(models.Model):
+    PAYMENT_METHODS = [
+        ('cash', 'Наличные'),
+        ('card', 'Банковская карта'),
+        ('transfer', 'Банковский перевод'),
+    ]
+
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     payment_date = models.DateTimeField(auto_now_add=True)
     paid_course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True, blank=True)
     paid_lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, null=True, blank=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    payment_method = models.CharField(max_length=20, choices=[
-        ('cash', 'Наличные'),
-        ('transfer', 'Перевод'),
-    ])
+    payment_method = models.CharField(max_length=20, choices=PAYMENT_METHODS)
 
     def __str__(self):
         return f"{self.user} - {self.amount}"
