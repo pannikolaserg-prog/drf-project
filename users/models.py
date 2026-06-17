@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+
 from materials.models import Course, Lesson
 
 
@@ -9,7 +10,7 @@ from materials.models import Course, Lesson
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:
-            raise ValueError('Email обязателен')
+            raise ValueError("Email обязателен")
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
@@ -17,16 +18,17 @@ class UserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, password=None, **extra_fields):
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
-        extra_fields.setdefault('is_active', True)
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+        extra_fields.setdefault("is_active", True)
 
-        if extra_fields.get('is_staff') is not True:
-            raise ValueError('Суперпользователь должен иметь is_staff=True.')
-        if extra_fields.get('is_superuser') is not True:
-            raise ValueError('Суперпользователь должен иметь is_superuser=True.')
+        if extra_fields.get("is_staff") is not True:
+            raise ValueError("Суперпользователь должен иметь is_staff=True.")
+        if extra_fields.get("is_superuser") is not True:
+            raise ValueError("Суперпользователь должен иметь is_superuser=True.")
 
         return self.create_user(email, password, **extra_fields)
+
 
 class User(AbstractUser):
     username = None
@@ -71,15 +73,19 @@ class User(AbstractUser):
 
 class Payment(models.Model):
     PAYMENT_METHODS = [
-        ('cash', 'Наличные'),
-        ('card', 'Банковская карта'),
-        ('transfer', 'Банковский перевод'),
+        ("cash", "Наличные"),
+        ("card", "Банковская карта"),
+        ("transfer", "Банковский перевод"),
     ]
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     payment_date = models.DateTimeField(auto_now_add=True)
-    paid_course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True, blank=True)
-    paid_lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, null=True, blank=True)
+    paid_course = models.ForeignKey(
+        Course, on_delete=models.CASCADE, null=True, blank=True
+    )
+    paid_lesson = models.ForeignKey(
+        Lesson, on_delete=models.CASCADE, null=True, blank=True
+    )
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_method = models.CharField(max_length=20, choices=PAYMENT_METHODS)
 

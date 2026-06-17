@@ -1,12 +1,15 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, filters
-from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView, DestroyAPIView
+from rest_framework import filters, viewsets
+from rest_framework.generics import (CreateAPIView, DestroyAPIView,
+                                     ListAPIView, RetrieveAPIView,
+                                     UpdateAPIView)
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from .filters import PaymentFilter
-from .models import User, Payment
-from .serializers import UserSerializer, PaymentSerializer, UserProfileSerializer
+from .models import Payment, User
+from .serializers import (PaymentSerializer, UserProfileSerializer,
+                          UserSerializer)
 
 
 class UserListView(ListAPIView):
@@ -43,13 +46,14 @@ class UserDeleteView(DestroyAPIView):
         user.delete()
         return Response({"message": f"Пользователь {user.email} удален"})
 
+
 class PaymentViewSet(viewsets.ModelViewSet):
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     filterset_class = PaymentFilter
-    ordering_fields = ['payment_date']  # Можно сортировать по дате
-    ordering = ['-payment_date']  # По умолчанию сортировка: сначала новые
+    ordering_fields = ["payment_date"]  # Можно сортировать по дате
+    ordering = ["-payment_date"]  # По умолчанию сортировка: сначала новые
 
 
 from rest_framework import generics, permissions
