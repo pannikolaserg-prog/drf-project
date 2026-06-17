@@ -5,10 +5,14 @@ from .views import (CourseViewSet, LessonListCreateAPIView,
                     LessonRetrieveUpdateDestroyAPIView)
 
 router = DefaultRouter()
-router.register(r'courses', CourseViewSet, basename='course')
+router.register(r"courses", CourseViewSet, basename="course")
 
 urlpatterns = [
-    path('', include(router.urls)),
-    path('lessons/', LessonListCreateAPIView.as_view(), name='lesson-list'),
-    path('lessons/<int:pk>/', LessonRetrieveUpdateDestroyAPIView.as_view(), name='lesson-detail'),
+    path("", include(router.urls)),
+    path("lessons/", LessonListCreateAPIView.as_view(), name="lesson-list"),
+    path(
+        "lessons/<int:pk>/",
+        LessonRetrieveUpdateDestroyAPIView.as_view(),
+        name="lesson-detail",
+    ),
 ]

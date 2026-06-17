@@ -42,7 +42,8 @@ class Lesson(models.Model):
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        verbose_name="Владелец",
+        verbose_name="Ученик",
+        help_text="Укажите имя ученика",
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

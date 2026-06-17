@@ -1,16 +1,27 @@
 from rest_framework import serializers
-from .models import User, Payment
+
+from .models import Payment, User
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'email', 'first_name', 'last_name', 'phone', 'city', 'avatar']
+        fields = ["id", "email", "first_name", "last_name", "phone", "city", "avatar"]
+
 
 class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
-        fields = ['id', 'user', 'course', 'lesson', 'amount', 'payment_date', 'payment_method', 'is_successful']
+        fields = [
+            "id",
+            "user",
+            "course",
+            "lesson",
+            "amount",
+            "payment_date",
+            "payment_method",
+            "is_successful",
+        ]
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -18,4 +29,4 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'email', 'phone', 'first_name', 'last_name', 'payments']
+        fields = ["id", "email", "phone", "first_name", "last_name", "payments"]
