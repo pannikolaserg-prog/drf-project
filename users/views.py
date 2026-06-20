@@ -2,12 +2,13 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets
 from rest_framework.generics import (CreateAPIView, DestroyAPIView,
                                      ListAPIView, RetrieveAPIView,
-                                     UpdateAPIView)
-from rest_framework.permissions import AllowAny
+                                     UpdateAPIView, get_object_or_404)
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from .filters import PaymentFilter
-from .models import Payment, User
+from .models import Payment, User, Subscription
 from .serializers import (PaymentSerializer, UserProfileSerializer,
                           UserSerializer)
 
@@ -65,3 +66,22 @@ class UserProfileView(generics.RetrieveAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+class SubscriptionView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        course = get_object_or_404(Course, id=request.data.get('course_id'))
+
+        sub = Subscription.objects.filter(user=user, course=course)
+
+        if sub.exists():
+            sub.delete()
+            message = "Подписка удалена"
+        else:
+            Subscription.objects.create(user=user, course=course)
+            message = "Подписка добавлена"
+
+        return Response({"message": message})
