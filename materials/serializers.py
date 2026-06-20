@@ -44,4 +44,4 @@ class CourseDetailSerializers(serializers.ModelSerializer):
         fields = ("name", "description", "course_with_same_description")
 
     def get_course_with_same_description(self, course):
-        return Course.objects.filter(description=course.description)
+        return list(Course.objects.filter(description=course.description).values('id', 'name'))
