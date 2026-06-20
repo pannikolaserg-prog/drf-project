@@ -1,7 +1,12 @@
 from rest_framework import serializers
 from .models import Course, Lesson
+from users.validators import validate_youtube_url
+
 
 class LessonSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(validators=[validate_youtube_url])
+    description = serializers.CharField(validators=[validate_youtube_url])
+
     count_lesson_with_same_description = serializers.SerializerMethodField()
 
     def get_count_lesson_with_same_description(self, lesson):
@@ -10,14 +15,7 @@ class LessonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lesson
         fields = (
-            "id",
-            "name",
-            "description",
-            "course",
-            "owner",
-            "created_at",
-            "updated_at",
-            "count_lesson_with_same_description",
+            "all"
         )
         read_only_fields = ("owner", "created_at", "updated_at")
 
