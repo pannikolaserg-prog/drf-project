@@ -1,4 +1,6 @@
 from rest_framework import serializers
+
+from users.models import Subscription
 from .models import Course, Lesson
 from users.validators import validate_youtube_url
 
@@ -27,6 +29,12 @@ class CourseSerializer(serializers.ModelSerializer):
         model = Course
         fields = ["id", "name", "description", "created_at", "lessons", "lessons_count"]
         read_only_fields = ["id", "created_at"]
+
+    def get_is_subscribed(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            return Subscription.objects.filter(user=request.user, course=obj).exists()
+        return False
 
 class CourseDetailSerializers(serializers.ModelSerializer):
     course_with_same_description = serializers.SerializerMethodField()
