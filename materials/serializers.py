@@ -17,7 +17,7 @@ class LessonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lesson
         fields = (
-            "all"
+            "__all__"
         )
         read_only_fields = ("owner", "created_at", "updated_at")
 
@@ -41,7 +41,9 @@ class CourseDetailSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = Course
-        fields = ("name", "description", "course_with_same_description")
+        fields = ["name", "description", "course_with_same_description"]
 
     def get_course_with_same_description(self, course):
         return list(Course.objects.filter(description=course.description).values('id', 'name'))
+
+
