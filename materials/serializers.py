@@ -45,5 +45,3 @@ class CourseDetailSerializers(serializers.ModelSerializer):
 
     def get_course_with_same_description(self, course):
         return list(Course.objects.filter(description=course.description).values('id', 'name'))
-
-
