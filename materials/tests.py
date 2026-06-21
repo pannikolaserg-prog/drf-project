@@ -82,3 +82,64 @@ class CourseTestCase(APITestCase):
         self.assertEqual(data["results"][0]["id"], self.course.pk)
 
 
+class LessonTestCase(APITestCase):
+
+    def setUp(self):
+        self.user = User.objects.create(
+            email="admin@sky.pro",
+            phone="+79991234567"
+        )
+        self.course = Course.objects.create(
+            name="Python",
+            description="Курс основы программирования",
+            owner=self.user
+        )
+        self.lesson = Lesson.objects.create(
+            name="https://www.youtube.com/watch?v=test123",
+            description="https://www.youtube.com/watch?v=desc123",
+            course=self.course,
+            owner=self.user
+        )
+        self.client.force_authenticate(user=self.user)
+
+    def test_lesson_retrieve(self):
+        url = reverse("lesson-detail", args=(self.lesson.pk,))
+        response = self.client.get(url)
+        data = response.json()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(data["name"], "https://www.youtube.com/watch?v=test123")
+
+    def test_lesson_create(self):
+        url = reverse("lesson-list")
+        data = {
+            "name": "https://www.youtube.com/watch?v=lesson123",
+            "description": "https://www.youtube.com/watch?v=desc456",
+            "course": self.course.pk
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Lesson.objects.all().count(), 2)
+
+    def test_lesson_update(self):
+        url = reverse("lesson-detail", args=(self.lesson.pk,))
+        data = {
+            "name": "https://www.youtube.com/watch?v=updated123"
+        }
+        response = self.client.patch(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["name"], "https://www.youtube.com/watch?v=updated123")
+
+    def test_lesson_delete(self):
+        url = reverse("lesson-detail", args=(self.lesson.pk,))
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(Lesson.objects.all().count(), 0)
+
+    def test_lesson_list(self):
+        url = reverse("lesson-list")
+        response = self.client.get(url)
+        data = response.json()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(data["count"], 1)
+        self.assertEqual(data["results"][0]["name"], "https://www.youtube.com/watch?v=test123")
