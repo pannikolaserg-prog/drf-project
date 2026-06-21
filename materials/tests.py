@@ -32,3 +32,53 @@ class CourseTestCase(APITestCase):
         data = response.json()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(data["name"], "Python")
+
+    def test_course_create(self):
+        url = reverse("course-list")
+        data = {
+            "name": "Java",
+            "description": "Курс по Java"
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(
+            response.status_code, status.HTTP_201_CREATED
+        )
+        self.assertEqual(
+            Course.objects.all().count(), 2
+        )
+
+    def test_course_update(self):
+        url = reverse("course-detail", args=(self.course.pk,))
+        data = {
+            "name": "Basic"
+        }
+        response = self.client.patch(url, data)
+        data = response.json()
+        self.assertEqual(
+            response.status_code, status.HTTP_200_OK
+        )
+        self.assertEqual(
+            data["name"], "Basic"
+        )
+
+    def test_course_delete(self):
+        url = reverse("course-detail", args=(self.course.pk,))
+        response = self.client.delete(url)
+        self.assertEqual(
+            response.status_code, status.HTTP_204_NO_CONTENT
+        )
+        self.assertEqual(
+            Course.objects.all().count(), 0
+        )
+
+    def test_course_list(self):
+        url = reverse("course-list")
+        response = self.client.get(url)
+        data = response.json()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(data["count"], 1)
+        self.assertEqual(data["results"][0]["name"], "Python")
+        self.assertEqual(data["results"][0]["id"], self.course.pk)
+
+
