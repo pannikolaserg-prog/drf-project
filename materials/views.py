@@ -1,3 +1,5 @@
+from django.utils.decorators import method_decorator
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
@@ -8,7 +10,9 @@ from .paginators import CustomPagination
 from .serializers import (CourseDetailSerializers, CourseSerializer,
                           LessonSerializer)
 
-
+@method_decorator(name='list', decorator=swagger_auto_schema(
+    operation_description="description from swagger_auto_schema via method_decorator"
+))
 
 class CourseViewSet(ModelViewSet):
     """ViewSet для работы с курсами"""
