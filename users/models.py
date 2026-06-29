@@ -101,3 +101,41 @@ class Subscription(models.Model):
 
     class Meta:
         unique_together = ('user', 'course')
+
+class Status_Pay(models.Model):
+    amount = models.PositiveIntegerField(
+        verbose_name="Сумма платежа",
+        help_text="Укажите сумму платежа",
+    )
+
+    session_id = models.CharField(
+        max_length=250,
+        blank=True,
+        null=True,
+        verbose_name="ID сессии",
+        help_text="Укажите ID сессии",
+    )
+    link = models.URLField(
+        max_length=400,
+        blank=True,
+        null=True,
+        verbose_name="Ссылка на оплату",
+        help_text="Укажите ссылку на оплату",
+    )
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name="Пользователь",
+        help_text="Укажите пользователя",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_paid = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = "Статус оплаты"
+        verbose_name_plural = "Статусы оплаты"
+
+    def __str__(self):
+        return f"Оплата {self.id} - {self.amount}"
