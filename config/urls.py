@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from users.views import PaymentViewSet
+from users.views import PaymentViewSet, CreatePaymentView, PaymentSuccessView, PaymentCancelView
 
 from django.urls import include, path
 from rest_framework import permissions
@@ -34,6 +34,9 @@ urlpatterns = [
     path("payments/", include(router.urls)),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path('api/payments/create/', CreatePaymentView.as_view()),
+    path('api/payments/success/', PaymentSuccessView.as_view()),
+    path('api/payments/cancel/', PaymentCancelView.as_view()),
 ]
 
 if settings.DEBUG:
