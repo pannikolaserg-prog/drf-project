@@ -4,16 +4,39 @@ from django.contrib import admin
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from users.views import PaymentViewSet
+from users.views import PaymentViewSet, CreatePaymentView, PaymentSuccessView, PaymentCancelView
+
+from django.urls import include, path
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
 
 router = DefaultRouter()
 router.register(r"payments", PaymentViewSet, basename="payment")
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="API Documentation",
+        default_version='v1',
+        description="Your API description",
+        terms_of_service="https://www.example.com/policies/terms/",
+        contact=openapi.Contact(email="contact@example.com"),
+        license=openapi.License(name="BSD License"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include("materials.urls")),
     path("users/", include("users.urls", namespace="users")),
     path("payments/", include(router.urls)),
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path('api/payments/create/', CreatePaymentView.as_view()),
+    path('api/payments/success/', PaymentSuccessView.as_view()),
+    path('api/payments/cancel/', PaymentCancelView.as_view()),
 ]
 
 if settings.DEBUG:
