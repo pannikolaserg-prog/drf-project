@@ -1,5 +1,5 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, viewsets
+from rest_framework import filters, viewsets, status
 from rest_framework.generics import (CreateAPIView, DestroyAPIView,
                                      ListAPIView, RetrieveAPIView,
                                      UpdateAPIView, get_object_or_404)
@@ -14,6 +14,8 @@ from .serializers import (PaymentSerializer, UserProfileSerializer,
                           UserSerializer, Status_PaySerializer)
 
 from rest_framework import generics, permissions
+
+from .services import create_stripe_payment
 
 
 class UserListView(ListAPIView):
@@ -137,3 +139,36 @@ class PaymentSuccessView(APIView):
 class PaymentCancelView(APIView):
     def get(self, request):
         return Response({'message': 'Оплата отменена'})
+
+
+class Status_PayCreateView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        amount = request.data.get('amount')
+        course_id = request.data.get('course_id')
+
+        if not amount:
+            return Response(
+                {'error': 'Сумма обязательна'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Используем сервис для создания платежа
+        result = create_stripe_payment(
+            user=request.user,
+            amount=amount,
+            course_id=course_id
+        )
+
+        if result['success']:
+            return Response({
+                'payment_url': result['payment_url'],
+                'session_id': result['session_id'],
+                'payment_id': result['payment_id'],
+            }, status=status.HTTP_201_CREATED)
+        else:
+            return Response(
+                {'error': result['error']},
+                status=status.HTTP_400_BAD_REQUEST
+            )
