@@ -7,18 +7,14 @@ class Course(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='courses')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    price = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        default=0.00,
-        verbose_name="Цена"
-    )
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     class Meta:
         ordering = ['id']
 
     def __str__(self):
         return self.name
+
 
 class Lesson(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='lessons')
