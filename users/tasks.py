@@ -53,23 +53,14 @@ def notify_subscribers_about_course_update(course_id):
 
 @shared_task
 def block_inactive_users():
-    """Задание 3: Блокировка пользователей, не заходивших более месяца"""
     one_month_ago = timezone.now() - timedelta(days=30)
 
-    inactive_users = User.objects.filter(
+    count = User.objects.filter(
         last_login__lt=one_month_ago,
         is_active=True,
-        is_superuser=False,  # Не блокируем суперпользователей
-        is_staff=False,  # Не блокируем сотрудников
-    )
-
-    count = inactive_users.count()
-
-    for user in inactive_users:
-        user.is_active = False
-        user.save()
-        # Опционально: отправить письмо о блокировке
-        send_account_blocked_email.delay(user.email)
+        is_superuser=False,
+        is_staff=False,
+    ).update(is_active=False)  # ✅ Одно обновление на все записи
 
     return f'Blocked {count} inactive users'
 
