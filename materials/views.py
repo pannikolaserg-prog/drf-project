@@ -1,16 +1,15 @@
-from datetime import timezone
-
+from django.utils import timezone  # вместо from datetime import timezone
 from django.utils.decorators import method_decorator
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
-from users.permissions import IsModer, IsOwnerOrModer, IsNotModer
+from users.permissions import IsModer, IsNotModer, IsOwnerOrModer
+from users.tasks import notify_subscribers_about_course_update  # Добавить импорт задачи
 from .models import Course, Lesson
 from .paginators import CustomPagination
-from .serializers import (CourseDetailSerializers, CourseSerializer,
-                          LessonSerializer)
+from .serializers import CourseDetailSerializers, CourseSerializer, LessonSerializer
 
 @method_decorator(name='list', decorator=swagger_auto_schema(
     operation_description="description from swagger_auto_schema via method_decorator"
@@ -65,17 +64,19 @@ class CourseViewSet(ModelViewSet):
 
     def perform_update(self, serializer, notify_subscribers_about_course_update=None):
         course = self.get_object()
-        updated_at = timezone.now()
+        last_updated = course.updated_at  # Сохраняем время ДО обновления
 
-        # Дополнительное задание: проверка на 4 часа
-        if course.updated_at and (updated_at - course.updated_at).total_seconds() < 14400:
-            # Если прошло меньше 4 часов — не отправляем уведомление
-            pass
-        else:
-            # Сохраняем курс
-            serializer.save()
-            # Отправляем уведомление подписчикам
-            notify_subscribers_about_course_update.delay(course.id)
+        # Сохраняем курс ВСЕГДА
+        serializer.save()
+
+        # Проверяем, прошло ли больше 4 часов (14400 секунд)
+        if last_updated:
+            time_diff = timezone.now() - last_updated
+            if time_diff.total_seconds() < 14400:
+                return  # Не отправляем уведомление
+
+        # Отправляем уведомление подписчикам
+        notify_subscribers_about_course_update.delay(course.id)
 
 class LessonListCreateAPIView(generics.ListCreateAPIView):
     """API для списка уроков и создания нового"""
