@@ -1,3 +1,5 @@
+import stripe
+
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets, status
 from rest_framework.generics import (CreateAPIView, DestroyAPIView,
@@ -89,46 +91,46 @@ class SubscriptionView(APIView):
         return Response({"message": message})
 
 
-class CreatePaymentView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request):
-        amount = request.data.get('amount', 1000)  # 1000 = 10.00 USD
-
-        try:
-            # Создаём сессию в Stripe
-            session = stripe.checkout.Session.create(
-                payment_method_types=['card'],
-                line_items=[{
-                    'price_data': {
-                        'currency': 'usd',
-                        'product_data': {
-                            'name': f'Оплата от {request.user.email}',
-                        },
-                        'unit_amount': int(amount),  # в копейках
-                    },
-                    'quantity': 1,
-                }],
-                mode='payment',
-                success_url='http://localhost:8000/api/payments/success/',
-                cancel_url='http://localhost:8000/api/payments/cancel/',
-            )
-
-            # Сохраняем в БД (если нужна модель Status_Pay)
-            # Status_Pay.objects.create(
-            #     user=request.user,
-            #     amount=amount,
-            #     session_id=session.id,
-            #     link=session.url
-            # )
-
-            return Response({
-                'payment_url': session.url,
-                'session_id': session.id
-            })
-
-        except Exception as e:
-            return Response({'error': str(e)}, status=400)
+# class CreatePaymentView(APIView):
+#     permission_classes = [IsAuthenticated]
+#
+#     def post(self, request):
+#         amount = request.data.get('amount', 1000)  # 1000 = 10.00 USD
+#
+#         try:
+#             # Создаём сессию в Stripe
+#             session = stripe.checkout.Session.create(
+#                 payment_method_types=['card'],
+#                 line_items=[{
+#                     'price_data': {
+#                         'currency': 'usd',
+#                         'product_data': {
+#                             'name': f'Оплата от {request.user.email}',
+#                         },
+#                         'unit_amount': int(amount),  # в копейках
+#                     },
+#                     'quantity': 1,
+#                 }],
+#                 mode='payment',
+#                 success_url='http://localhost:8000/api/payments/success/',
+#                 cancel_url='http://localhost:8000/api/payments/cancel/',
+#             )
+#
+#             # Сохраняем в БД (если нужна модель Status_Pay)
+#             # Status_Pay.objects.create(
+#             #     user=request.user,
+#             #     amount=amount,
+#             #     session_id=session.id,
+#             #     link=session.url
+#             # )
+#
+#             return Response({
+#                 'payment_url': session.url,
+#                 'session_id': session.id
+#             })
+#
+#         except Exception as e:
+#             return Response({'error': str(e)}, status=400)
 
 
 class PaymentSuccessView(APIView):
