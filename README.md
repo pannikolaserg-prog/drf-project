@@ -3,6 +3,8 @@
 Backend-часть SPA для трекинга привычек.
 Реализовано на **Django REST Framework** с **Celery**, **Redis**, **PostgreSQL** и **Stripe**.
 
+Перед тем, как начать работать с проектом, запустите
+программу Docker Desktop на вашем компьютере.
 ---
 
 ## 🚀 Запуск через Docker (рекомендуемый способ)
@@ -17,3 +19,4 @@ cp .env.example .env
 
 # 3. Запустить все сервисы
 docker-compose up --build
+
