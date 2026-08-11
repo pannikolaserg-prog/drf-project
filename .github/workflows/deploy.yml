@@ -28,6 +28,16 @@ jobs:
     - name: Lint
       run: flake8 .
 
+    - name: Run migrations
+      env:
+        DB_NAME: test_db
+        DB_USER: test_user
+        DB_PASSWORD: test_password
+        DB_HOST: localhost
+        DB_PORT: 5432
+        SECRET_KEY: "django-insecure-test-key"
+      run: python manage.py migrate
+
     - name: Test
       run: python manage.py test
       env:
