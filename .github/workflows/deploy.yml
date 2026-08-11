@@ -32,6 +32,13 @@ jobs:
       run: python manage.py test
       env:
         DJANGO_SETTINGS_MODULE: config.settings
+        SECRET_KEY: "django-insecure-test-key-12345"  # 👈 добавить
+        DEBUG: "False"                                 # 👈 добавить
+        DB_NAME: "test_db"                            # 👈 добавить
+        DB_USER: "test_user"                          # 👈 добавить
+        DB_PASSWORD: "test_password"                  # 👈 добавить
+        DB_HOST: "localhost"                          # 👈 добавить
+        DB_PORT: "5432"
 
   build:
     needs: test
