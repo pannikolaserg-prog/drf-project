@@ -6,7 +6,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
 from users.permissions import IsNotModer, IsOwnerOrModer
-from users.tasks import notify_subscribers_about_course_update  # Добавить импорт задачи
 from .models import Course, Lesson
 from .paginators import CustomPagination
 from .serializers import CourseDetailSerializers, CourseSerializer, LessonSerializer
@@ -62,7 +61,7 @@ class CourseViewSet(ModelViewSet):
         """При создании курса автоматически назначаем владельца"""
         serializer.save(owner=self.request.user)
 
-    def perform_update(self, serializer, notify_subscribers_about_course_update=None):
+    def perform_update(self, serializer):
         course = self.get_object()
         last_updated = course.updated_at  # Сохраняем время ДО обновления
 
