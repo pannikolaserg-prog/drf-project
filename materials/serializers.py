@@ -21,6 +21,7 @@ class LessonSerializer(serializers.ModelSerializer):
         )
         read_only_fields = ("owner", "created_at", "updated_at")
 
+
 class CourseSerializer(serializers.ModelSerializer):
     lessons = LessonSerializer(many=True, read_only=True)
     lessons_count = serializers.IntegerField(source="lessons.count", read_only=True)
@@ -35,6 +36,7 @@ class CourseSerializer(serializers.ModelSerializer):
         if request and request.user.is_authenticated:
             return Subscription.objects.filter(user=request.user, course=obj).exists()
         return False
+
 
 class CourseDetailSerializers(serializers.ModelSerializer):
     course_with_same_description = serializers.SerializerMethodField()

@@ -1,4 +1,3 @@
-import stripe
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets, status
@@ -11,9 +10,9 @@ from rest_framework.views import APIView
 
 from materials.models import Course
 from .filters import PaymentFilter
-from .models import Payment, User, Subscription, Status_Pay
+from .models import Payment, User, Subscription
 from .serializers import (PaymentSerializer, UserProfileSerializer,
-                          UserSerializer, Status_PaySerializer)
+                          UserSerializer)
 
 from rest_framework import generics, permissions
 

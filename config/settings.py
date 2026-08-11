@@ -1,7 +1,6 @@
 import os
 from datetime import timedelta
 from pathlib import Path
-from celery.schedules import crontab
 from dotenv import load_dotenv
 
 load_dotenv()

@@ -2,7 +2,6 @@ import re
 from rest_framework import serializers
 
 
-
 def validate_youtube_url(value):
     """Проверяет, что ссылка ведёт на YouTube"""
     if not value:

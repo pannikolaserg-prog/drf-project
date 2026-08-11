@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from materials.models import Course
 
+
 class Subscription(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='subscriptions')
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='subscribers')
