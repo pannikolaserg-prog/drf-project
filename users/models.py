@@ -102,6 +102,7 @@ class Subscription(models.Model):
     class Meta:
         unique_together = ('user', 'course')
 
+
 class Status_Pay(models.Model):
     amount = models.PositiveIntegerField(
         verbose_name="Сумма платежа",

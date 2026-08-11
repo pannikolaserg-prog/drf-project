@@ -4,17 +4,16 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
-
-from users.permissions import IsModer, IsNotModer, IsOwnerOrModer
-from users.tasks import notify_subscribers_about_course_update  # Добавить импорт задачи
+from users.tasks import notify_subscribers_about_course_update
+from users.permissions import IsNotModer, IsOwnerOrModer
 from .models import Course, Lesson
 from .paginators import CustomPagination
 from .serializers import CourseDetailSerializers, CourseSerializer, LessonSerializer
 
+
 @method_decorator(name='list', decorator=swagger_auto_schema(
     operation_description="description from swagger_auto_schema via method_decorator"
 ))
-
 class CourseViewSet(ModelViewSet):
     """ViewSet для работы с курсами"""
 
@@ -62,7 +61,7 @@ class CourseViewSet(ModelViewSet):
         """При создании курса автоматически назначаем владельца"""
         serializer.save(owner=self.request.user)
 
-    def perform_update(self, serializer, notify_subscribers_about_course_update=None):
+    def perform_update(self, serializer):
         course = self.get_object()
         last_updated = course.updated_at  # Сохраняем время ДО обновления
 
@@ -77,6 +76,7 @@ class CourseViewSet(ModelViewSet):
 
         # Отправляем уведомление подписчикам
         notify_subscribers_about_course_update.delay(course.id)
+
 
 class LessonListCreateAPIView(generics.ListCreateAPIView):
     """API для списка уроков и создания нового"""

@@ -36,4 +36,3 @@ class Status_PaySerializer(ModelSerializer):
     class Meta:
         model = Status_Pay
         fields = "__all__"
-
