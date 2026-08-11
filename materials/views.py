@@ -4,7 +4,7 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
-
+from users.tasks import notify_subscribers_about_course_update
 from users.permissions import IsNotModer, IsOwnerOrModer
 from .models import Course, Lesson
 from .paginators import CustomPagination
